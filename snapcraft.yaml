@@ -1,0 +1,59 @@
+name: ppsspp-emulator
+base: core24
+version: '1.19.3'
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+summary: A PlayStation Portable emulator
+description: |
+  PPSSPP is a PSP emulator that can run games in full HD resolution. It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
+grade: stable
+confinement: strict
+
+apps:
+  ppsspp:
+    command: opt/ppsspp/AppDir/bin/PPSSPPSDL
+    desktop: usr/share/applications/PPSSPPSDL.desktop
+    extensions:
+      - gnome
+    plugs:
+      - home
+      - removable-media
+      - gtk-3-themes
+      - icon-themes
+      - desktop
+      - desktop-legacy
+      - x11
+      - opengl
+      - wayland
+      - audio-playback
+      - joystick
+      - screen-inhibit-control
+      - network
+
+parts:
+  ppsspp:
+    plugin: dump
+    source: .
+    build-packages:
+      - wget
+    override-build: |
+      craftctl default
+      pwd
+      ls -l
+      wget https://github.com/hrydgard/ppsspp/releases/download/v$SNAPCRAFT_PROJECT_VERSION/PPSSPP-v$SNAPCRAFT_PROJECT_VERSION-anylinux-x86_64.AppImage
+      chmod +x PPSSPP-v$SNAPCRAFT_PROJECT_VERSION-anylinux-x86_64.AppImage
+      ./PPSSPP-v$SNAPCRAFT_PROJECT_VERSION-anylinux-x86_64.AppImage --appimage-extract
+      mkdir -p $CRAFT_PART_INSTALL/opt/ppsspp
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/applications
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
+      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/share/icons/hicolor/scalable/apps/ppsspp.png|' AppDir/PPSSPPSDL.desktop
+      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/opt/ppsspp/AppDir/bin/PPSSPPSDL|' AppDir/PPSSPPSDL.desktop
+      mv -f AppDir/PPSSPPSDL.desktop $CRAFT_PART_INSTALL/usr/share/applications/
+      mv -f AppDir/ppsspp.png $CRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
+      mv -f AppDir/ $CRAFT_PART_INSTALL/opt/ppsspp
+    prime:
+      - usr/share/applications/
+      - usr/share/icons/hicolor/scalable/apps
+      - opt/ppsspp
