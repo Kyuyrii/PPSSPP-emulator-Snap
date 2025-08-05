@@ -12,48 +12,56 @@ grade: stable
 confinement: strict
 
 apps:
-  ppsspp:
-    command: opt/ppsspp/AppDir/bin/PPSSPPSDL
-    desktop: usr/share/applications/PPSSPPSDL.desktop
+  ppsspp-emulator:
+    command: usr/local/bin/PPSSPPSDL
+    desktop: usr/local/share/applications/PPSSPPSDL.desktop
+    environment:
+      HOME: $SNAP_USER_COMMON
+      SDL_VIDEO_X11_WMCLASS: org.ppsspp.PPSSPP
+      SDL_VIDEO_WAYLAND_WMCLASS: org.ppsspp.PPSSPP
     extensions:
-      - gnome
+      - kde-neon-6
     plugs:
       - home
       - removable-media
-      - gtk-3-themes
-      - icon-themes
-      - desktop
-      - desktop-legacy
-      - x11
-      - opengl
-      - wayland
-      - audio-playback
       - joystick
       - screen-inhibit-control
-      - network
+      - bluez
+
+plugs:
+  shared-memory:
+    private: true
 
 parts:
   ppsspp:
-    plugin: dump
-    source: .
+    plugin: cmake
+    source: https://github.com/hrydgard/ppsspp.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
     build-packages:
-      - wget
+      - build-essential
+      - libgl1-mesa-dev
+      - libsdl2-dev
+      - libsdl2-ttf-dev
+      - libfontconfig1-dev
+      - libvulkan-dev
+      - libglew-dev
+      - libzstd-dev
+    cmake-parameters:
+      - -DUSE_SYSTEM_FFMPEG=OFF
+      - -DUSE_SYSTEM_LIBZIP=ON
+      - -DUSE_SYSTEM_ZSTD=ON
+      - -DUSE_WAYLAND_WSI=ON
+      - -DUSING_QT_UI=OFF
+      - -DBUILD_TESTING=OFF
+      - -DOpenGL_GL_PREFERENCE=GLVND
+    stage-packages:
+      - libsdl2-ttf-2.0-0
+      - libsdl2-2.0-0
     override-build: |
       craftctl default
-      pwd
-      ls -l
-      wget https://github.com/hrydgard/ppsspp/releases/download/v$SNAPCRAFT_PROJECT_VERSION/PPSSPP-v$SNAPCRAFT_PROJECT_VERSION-anylinux-x86_64.AppImage
-      chmod +x PPSSPP-v$SNAPCRAFT_PROJECT_VERSION-anylinux-x86_64.AppImage
-      ./PPSSPP-v$SNAPCRAFT_PROJECT_VERSION-anylinux-x86_64.AppImage --appimage-extract
-      mkdir -p $CRAFT_PART_INSTALL/opt/ppsspp
-      mkdir -p $CRAFT_PART_INSTALL/usr/share/applications
-      mkdir -p $CRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
-      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/share/icons/hicolor/scalable/apps/ppsspp.png|' AppDir/PPSSPPSDL.desktop
-      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/opt/ppsspp/AppDir/bin/PPSSPPSDL|' AppDir/PPSSPPSDL.desktop
-      mv -f AppDir/PPSSPPSDL.desktop $CRAFT_PART_INSTALL/usr/share/applications/
-      mv -f AppDir/ppsspp.png $CRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
-      mv -f AppDir/ $CRAFT_PART_INSTALL/opt/ppsspp
-    prime:
-      - usr/share/applications/
-      - usr/share/icons/hicolor/scalable/apps
-      - opt/ppsspp
+      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/local/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/usr/local/bin/PPSSPPSDL|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+
+layout:
+  /usr/local/share/ppsspp:
+    symlink: $SNAP/usr/local/share/ppsspp
