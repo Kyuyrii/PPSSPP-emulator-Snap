@@ -59,8 +59,9 @@ parts:
       - libsdl2-2.0-0
     override-build: |
       craftctl default
-      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/local/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
       sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/usr/local/bin/PPSSPPSDL|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/local/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
 
 layout:
   /usr/local/share/ppsspp:
