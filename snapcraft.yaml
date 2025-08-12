@@ -1,0 +1,72 @@
+name: ppsspp-emulator
+base: core24
+version: '1.19.3'
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+summary: A PlayStation Portable emulator
+description: |
+  PPSSPP is a PSP emulator that can run games in full HD resolution. It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
+grade: stable
+confinement: strict
+
+apps:
+  ppsspp-emulator:
+    command: usr/local/bin/PPSSPPSDL
+    desktop: usr/local/share/applications/PPSSPPSDL.desktop
+    common-id: org.ppsspp.PPSSPP
+    environment:
+      SDL_VIDEO_X11_WMCLASS: org.ppsspp.PPSSPP
+      SDL_VIDEO_WAYLAND_WMCLASS: org.ppsspp.PPSSPP
+    extensions: [kde-neon-6]
+    plugs:
+      - unity7
+      - screen-inhibit-control
+      - audio-playback
+      - network
+      - network-bind
+      - home
+      - removable-media
+      - mount-observe
+      - joystick
+      - bluez
+
+plugs:
+  shared-memory:
+    private: true
+
+parts:
+  ppsspp:
+    plugin: cmake
+    source: https://github.com/hrydgard/ppsspp.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
+    build-packages:
+      - build-essential
+      - libgl1-mesa-dev
+      - libsdl2-dev
+      - libsdl2-ttf-dev
+      - libfontconfig1-dev
+      - libvulkan-dev
+      - libglew-dev
+      - libzstd-dev
+    cmake-parameters:
+      - -DUSE_SYSTEM_FFMPEG=OFF
+      - -DUSE_SYSTEM_LIBZIP=ON
+      - -DUSE_SYSTEM_ZSTD=ON
+      - -DUSE_WAYLAND_WSI=ON
+      - -DUSING_QT_UI=OFF
+      - -DBUILD_TESTING=OFF
+      - -DOpenGL_GL_PREFERENCE=GLVND
+    stage-packages:
+      - libsdl2-ttf-2.0-0
+      - libsdl2-2.0-0
+    override-build: |
+      craftctl default
+      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/usr/local/bin/PPSSPPSDL|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/local/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+
+layout:
+  /usr/local/share/ppsspp:
+    symlink: $SNAP/usr/local/share/ppsspp
