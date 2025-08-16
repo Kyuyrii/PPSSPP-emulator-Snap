@@ -13,12 +13,13 @@ confinement: strict
 
 apps:
   ppsspp-emulator:
-    command: usr/local/bin/PPSSPPSDL
-    desktop: usr/local/share/applications/PPSSPPSDL.desktop
+    command: usr/games/bin/PPSSPPSDL
+    desktop: usr/games/share/applications/PPSSPPSDL.desktop
     common-id: org.ppsspp.PPSSPP
     environment:
       SDL_VIDEO_X11_WMCLASS: org.ppsspp.PPSSPP
       SDL_VIDEO_WAYLAND_WMCLASS: org.ppsspp.PPSSPP
+      QT_QPA_PLATFORMTHEME: kde    
     extensions: [kde-neon-6]
     plugs:
       - unity7
@@ -36,6 +37,14 @@ plugs:
   shared-memory:
     private: true
 
+package-repositories:
+  - type: apt
+    url: http://origin.archive.neon.kde.org/user
+    suites: [noble]
+    components: [main]
+    architectures: [amd64]
+    key-id: 444DABCF3667D0283F894EDDE6D4736255751E5D
+
 parts:
   ppsspp:
     plugin: cmake
@@ -51,6 +60,7 @@ parts:
       - libglew-dev
       - libzstd-dev
     cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr/games
       - -DUSE_SYSTEM_FFMPEG=OFF
       - -DUSE_SYSTEM_LIBZIP=ON
       - -DUSE_SYSTEM_ZSTD=ON
@@ -58,15 +68,33 @@ parts:
       - -DUSING_QT_UI=OFF
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
-    stage-packages:
-      - libsdl2-ttf-2.0-0
-      - libsdl2-2.0-0
     override-build: |
       craftctl default
-      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
-      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/usr/local/bin/PPSSPPSDL|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
-      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/local/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/local/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/usr/games/bin/PPSSPPSDL|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/games/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
+
+  qarma:
+    after: [ppsspp]
+    plugin: nil
+    build-packages: [qmake6]
+    source: https://github.com/luebking/qarma.git
+    source-tag: v1.0.0
+    override-build: |
+      qmake6 PREFIX=$CRAFT_PART_INSTALL/
+      make
+      make install
+
+  dependencies:
+    after: [qarma]
+    plugin: nil
+    stage-packages:
+      - libsdl2-2.0-0
+      - libsdl2-ttf-2.0-0
+    prime:
+      - usr/lib/x86_64-linux-gnu/libSDL2*
+      - usr/lib/x86_64-linux-gnu/libdecor-0*
 
 layout:
-  /usr/local/share/ppsspp:
-    symlink: $SNAP/usr/local/share/ppsspp
+  /usr/games/share/ppsspp:
+    symlink: $SNAP/usr/games/share/ppsspp
