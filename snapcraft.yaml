@@ -73,6 +73,7 @@ parts:
       - -DUSING_QT_UI=OFF
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
+      - -DPNG_LIBRARY=/usr/lib/CRAFT_ARCH_TRIPLET_BUILD_ON/libpng16.so
     override-build: |
       craftctl default
       sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
