@@ -62,6 +62,8 @@ parts:
       - libvulkan-dev
       - libglew-dev
       - libzstd-dev
+      - libpng-dev
+      - zlib1g-dev
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr/games
       - -DUSE_SYSTEM_FFMPEG=OFF
