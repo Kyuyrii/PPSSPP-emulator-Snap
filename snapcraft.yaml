@@ -19,7 +19,7 @@ apps:
     environment:
       SDL_VIDEO_X11_WMCLASS: org.ppsspp.PPSSPP
       SDL_VIDEO_WAYLAND_WMCLASS: org.ppsspp.PPSSPP
-      QT_QPA_PLATFORMTHEME: ""
+      QT_QPA_PLATFORMTHEME: kde
       QT_STYLE_OVERRIDE: kvantum
     extensions: [kde-neon-6]
     plugs:
