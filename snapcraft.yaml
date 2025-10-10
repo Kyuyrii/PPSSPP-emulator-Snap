@@ -19,7 +19,8 @@ apps:
     environment:
       SDL_VIDEO_X11_WMCLASS: org.ppsspp.PPSSPP
       SDL_VIDEO_WAYLAND_WMCLASS: org.ppsspp.PPSSPP
-      QT_QPA_PLATFORMTHEME: kde    
+      QT_QPA_PLATFORMTHEME: ""
+      QT_STYLE_OVERRIDE: kvantum
     extensions: [kde-neon-6]
     plugs:
       - unity7
@@ -36,6 +37,22 @@ apps:
 plugs:
   shared-memory:
     private: true
+  kvantum:
+    content: kvantum
+    interface: content
+    target: $SNAP/kvantum
+    default-provider: qt-style-kvantum
+
+environment:
+  QT_PLUGIN_PATH: $SNAP/kvantum/usr/lib/x86_64-linux-gnu/qt6/plugins${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}
+
+layout:
+  /usr/games/share/ppsspp:
+    symlink: $SNAP/usr/games/share/ppsspp
+  /usr/share/color-schemes:
+    symlink: $SNAP/kvantum/usr/share/color-schemes
+  /usr/share/Kvantum:
+    symlink: $SNAP/kvantum/usr/share/Kvantum
 
 package-repositories:
   - type: apt
@@ -94,7 +111,3 @@ parts:
     prime:
       - usr/lib/x86_64-linux-gnu/libSDL2*
       - usr/lib/x86_64-linux-gnu/libdecor-0*
-
-layout:
-  /usr/games/share/ppsspp:
-    symlink: $SNAP/usr/games/share/ppsspp
