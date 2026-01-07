@@ -5,30 +5,31 @@ platforms:
   amd64:
     build-on: [amd64]
     build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
 summary: A PlayStation Portable emulator
 description: |
   PPSSPP is a PSP emulator that can run games in full HD resolution. It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
 grade: stable
 confinement: strict
+icon: ppsspp.svg
 
 apps:
   ppsspp-emulator:
-    command: usr/games/bin/PPSSPPSDL
-    desktop: usr/games/share/applications/PPSSPPSDL.desktop
+    command: usr/bin/PPSSPPSDL
+    desktop: usr/share/applications/PPSSPPSDL.desktop
     common-id: org.ppsspp.PPSSPP
     environment:
       SDL_VIDEO_X11_WMCLASS: org.ppsspp.PPSSPP
       SDL_VIDEO_WAYLAND_WMCLASS: org.ppsspp.PPSSPP
-      QT_QPA_PLATFORMTHEME: xdgdesktopportal
-      LD_LIBRARY_PATH: $SNAP/lxqt-support/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
-      QT_PLUGIN_PATH: $SNAP/lxqt-support/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/qt6/plugins:$QT_PLUGIN_PATH
-    extensions: [kde-neon-6]
+    extensions: [gnome]
     plugs:
       - unity7
-      - screen-inhibit-control
       - audio-playback
       - network
       - network-bind
+      - screen-inhibit-control
       - home
       - removable-media
       - mount-observe
@@ -38,27 +39,10 @@ apps:
 plugs:
   shared-memory:
     private: true
-  lxqt-support:
-    content: lxqt-support
-    interface: content
-    target: $SNAP/lxqt-support
-    default-provider: lxqt-support
 
 layout:
-  /usr/games/share/ppsspp:
-    symlink: $SNAP/usr/games/share/ppsspp
-  /usr/share/color-schemes:
-    symlink: $SNAP/lxqt-support/usr/share/color-schemes
-  /usr/share/Kvantum:
-    symlink: $SNAP/lxqt-support/usr/share/Kvantum
-
-package-repositories:
-  - type: apt
-    url: http://origin.archive.neon.kde.org/user
-    suites: [noble]
-    components: [main]
-    architectures: [amd64]
-    key-id: 444DABCF3667D0283F894EDDE6D4736255751E5D
+  /usr/share/ppsspp:
+    symlink: $SNAP/usr/share/ppsspp
 
 parts:
   ppsspp:
@@ -75,7 +59,7 @@ parts:
       - libglew-dev
       - libzstd-dev
     cmake-parameters:
-      - -DCMAKE_INSTALL_PREFIX=/usr/games
+      - -DCMAKE_INSTALL_PREFIX=/usr
       - -DUSE_SYSTEM_FFMPEG=OFF
       - -DUSE_SYSTEM_LIBZIP=ON
       - -DUSE_SYSTEM_ZSTD=ON
@@ -85,27 +69,23 @@ parts:
       - -DOpenGL_GL_PREFERENCE=GLVND
     override-build: |
       craftctl default
-      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
-      sed -i 's|Exec=PPSSPPSDL|Exec=${SNAP}/usr/games/bin/PPSSPPSDL|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
-      sed -i 's|Icon=ppsspp|Icon=${SNAP}/usr/games/share/icons/hicolor/scalable/apps/ppsspp.svg|' $CRAFT_PART_INSTALL/usr/games/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
 
-  qarma:
+  zenity:
     after: [ppsspp]
     plugin: nil
-    build-packages: [qmake6]
-    source: https://github.com/luebking/qarma.git
-    source-tag: v1.0.0
-    override-build: |
-      qmake6 PREFIX=$CRAFT_PART_INSTALL/
-      make
-      make install
+    stage-packages: [zenity]
+    prime:
+      - usr/bin/zenity
 
   dependencies:
-    after: [qarma]
+    after: [zenity]
     plugin: nil
     stage-packages:
       - libsdl2-2.0-0
       - libsdl2-ttf-2.0-0
+      - libsamplerate0
     prime:
-      - usr/lib/x86_64-linux-gnu/libSDL2*
-      - usr/lib/x86_64-linux-gnu/libdecor-0*
+      - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libSDL2*
+      - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libdecor-0*
+      - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libsamplerate*
