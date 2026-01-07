@@ -2,9 +2,9 @@ name: ppsspp-emulator
 base: core24
 version: '1.19.3'
 platforms:
-#  amd64:
-#    build-on: [amd64]
-#    build-for: [amd64]
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
   arm64:
     build-on: [arm64]
     build-for: [arm64]
@@ -58,7 +58,6 @@ parts:
       - libvulkan-dev
       - libglew-dev
       - libzstd-dev
-      - libpng-dev
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DUSE_SYSTEM_FFMPEG=OFF
