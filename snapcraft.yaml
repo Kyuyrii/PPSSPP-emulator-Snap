@@ -10,7 +10,8 @@ platforms:
     build-for: [arm64]
 summary: A PlayStation Portable emulator
 description: |
-  PPSSPP is a PSP emulator that can run games in full HD resolution. It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
+  PPSSPP is a PSP emulator that can run games in full HD resolution.
+  It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
 grade: stable
 confinement: strict
 icon: ppsspp.svg
@@ -69,7 +70,7 @@ parts:
       - -DOpenGL_GL_PREFERENCE=GLVND
     override-build: |
       craftctl default
-      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [NyKyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
+      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
 
   zenity:
     after: [ppsspp]
