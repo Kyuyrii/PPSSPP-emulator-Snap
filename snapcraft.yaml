@@ -2,15 +2,16 @@ name: ppsspp-emulator
 base: core24
 version: '1.20.1'
 platforms:
-  arm64:
-    build-on: [arm64]
-    build-for: [arm64]
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
 summary: A PlayStation Portable emulator
 description: |
   PPSSPP is a PSP emulator that can run games in full HD resolution.
   It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
 grade: stable
 confinement: strict
+icon: ppsspp.svg
 
 apps:
   ppsspp-emulator:
@@ -65,12 +66,6 @@ parts:
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
     override-build: |
-      CMAKE_OPTIONS="${CMAKE_OPTIONS:-}"
-    
-      if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "aarch64-linux-gnu" ]; then
-        CMAKE_OPTIONS="$CMAKE_OPTIONS -DUSING_EGL=ON -DUSING_GLES2=ON"
-      fi
-
       craftctl default
       sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
 
