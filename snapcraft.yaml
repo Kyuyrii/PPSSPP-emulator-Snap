@@ -2,9 +2,6 @@ name: ppsspp-emulator
 base: core24
 version: '1.20.1'
 platforms:
-  amd64:
-    build-on: [amd64]
-    build-for: [amd64]
   arm64:
     build-on: [arm64]
     build-for: [arm64]
@@ -14,7 +11,6 @@ description: |
   It can even upscale textures that would otherwise be too blurry as they were made for the small screen of the original PSP.
 grade: stable
 confinement: strict
-icon: ppsspp.svg
 
 apps:
   ppsspp-emulator:
@@ -64,12 +60,15 @@ parts:
       - -DUSE_SYSTEM_FFMPEG=OFF
       - -DUSE_SYSTEM_LIBZIP=ON
       - -DUSE_SYSTEM_ZSTD=ON
-      - -DUSE_SYSTEM_LIBPNG=OFF
       - -DUSE_WAYLAND_WSI=ON
       - -DUSING_QT_UI=OFF
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
     override-build: |
+      if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "aarch64-linux-gnu" ]; then
+        export CMAKE_OPTIONS="$CMAKE_OPTIONS -DUSING_EGL=ON -DUSING_GLES2=ON"
+      fi
+
       craftctl default
       sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
 
