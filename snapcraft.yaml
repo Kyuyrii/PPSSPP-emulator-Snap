@@ -1,10 +1,13 @@
 name: ppsspp-emulator
 base: core24
-version: '1.20.1'
+version: '1.20.2'
 platforms:
   amd64:
     build-on: [amd64]
     build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
 summary: A PlayStation Portable emulator
 description: |
   PPSSPP is a PSP emulator that can run games in full HD resolution.
@@ -43,7 +46,7 @@ layout:
     symlink: $SNAP/usr/share/ppsspp
 
 parts:
-  ppsspp:
+  ppsspp-amd64:
     plugin: cmake
     source: https://github.com/hrydgard/ppsspp.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION
@@ -66,8 +69,40 @@ parts:
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
     override-build: |
-      craftctl default
-      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
+      if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "x86_64-linux-gnu" ]; then
+          craftctl default
+          sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
+      fi
+
+  ppsspp-arm64:
+    plugin: cmake
+    source: https://github.com/hrydgard/ppsspp.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
+    build-packages:
+      - build-essential
+      - libgl1-mesa-dev
+      - libsdl2-dev
+      - libsdl2-ttf-dev
+      - libfontconfig1-dev
+      - libvulkan-dev
+      - libglew-dev
+      - libzstd-dev
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DUSE_SYSTEM_FFMPEG=OFF
+      - -DUSE_SYSTEM_LIBZIP=ON
+      - -DUSE_SYSTEM_ZSTD=ON
+      - -DUSE_WAYLAND_WSI=ON
+      - -DUSING_QT_UI=OFF
+      - -DBUILD_TESTING=OFF
+      - -DOpenGL_GL_PREFERENCE=GLVND
+      - -DUSING_EGL=ON
+      - -DUSING_GLES2=ON
+    override-build: |
+      if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "aarch64-linux-gnu" ]; then
+          craftctl default
+          sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
+      fi
 
   zenity:
     after: [ppsspp]
