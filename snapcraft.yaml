@@ -105,7 +105,7 @@ parts:
       fi
 
   zenity:
-    after: [ppsspp]
+    after: [ppsspp-amd64, ppsspp-arm64]
     plugin: nil
     stage-packages: [zenity]
     prime:
