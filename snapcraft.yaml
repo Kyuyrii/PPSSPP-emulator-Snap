@@ -2,9 +2,6 @@ name: ppsspp-emulator
 base: core24
 version: '1.20.2'
 platforms:
-  amd64:
-    build-on: [amd64]
-    build-for: [amd64]
   arm64:
     build-on: [arm64]
     build-for: [arm64]
@@ -87,6 +84,7 @@ parts:
       - libvulkan-dev
       - libglew-dev
       - libzstd-dev
+      - libpng-dev
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DUSE_SYSTEM_FFMPEG=OFF
@@ -98,6 +96,7 @@ parts:
       - -DOpenGL_GL_PREFERENCE=GLVND
       - -DUSING_EGL=ON
       - -DUSING_GLES2=ON
+      - -DUSE_SYSTEM_LIBPNG=ON
     override-build: |
       if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "aarch64-linux-gnu" ]; then
           craftctl default
