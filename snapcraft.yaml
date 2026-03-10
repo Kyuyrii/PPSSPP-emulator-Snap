@@ -2,9 +2,9 @@ name: ppsspp-emulator
 base: core24
 version: '1.20.2'
 platforms:
-  arm64:
-    build-on: [arm64]
-    build-for: [arm64]
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
 summary: A PlayStation Portable emulator
 description: |
   PPSSPP is a PSP emulator that can run games in full HD resolution.
@@ -43,7 +43,7 @@ layout:
     symlink: $SNAP/usr/share/ppsspp
 
 parts:
-  ppsspp-amd64:
+  ppsspp:
     plugin: cmake
     source: https://github.com/hrydgard/ppsspp.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION
@@ -66,45 +66,11 @@ parts:
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
     override-build: |
-      if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "x86_64-linux-gnu" ]; then
-          craftctl default
-          sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
-      fi
-
-  ppsspp-arm64:
-    plugin: cmake
-    source: https://github.com/hrydgard/ppsspp.git
-    source-tag: v$SNAPCRAFT_PROJECT_VERSION
-    build-packages:
-      - build-essential
-      - libgl1-mesa-dev
-      - libsdl2-dev
-      - libsdl2-ttf-dev
-      - libfontconfig1-dev
-      - libvulkan-dev
-      - libglew-dev
-      - libzstd-dev
-      - libpng-dev
-    cmake-parameters:
-      - -DCMAKE_INSTALL_PREFIX=/usr
-      - -DUSE_SYSTEM_FFMPEG=OFF
-      - -DUSE_SYSTEM_LIBZIP=ON
-      - -DUSE_SYSTEM_ZSTD=ON
-      - -DUSE_WAYLAND_WSI=ON
-      - -DUSING_QT_UI=OFF
-      - -DBUILD_TESTING=OFF
-      - -DOpenGL_GL_PREFERENCE=GLVND
-      - -DUSING_EGL=ON
-      - -DUSING_GLES2=ON
-      - -DUSE_SYSTEM_LIBPNG=ON
-    override-build: |
-      if [ "$CRAFT_ARCH_TRIPLET_BUILD_FOR" = "aarch64-linux-gnu" ]; then
-          craftctl default
-          sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
-      fi
+      craftctl default
+      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
 
   zenity:
-    after: [ppsspp-amd64, ppsspp-arm64]
+    after: [ppsspp]
     plugin: nil
     stage-packages: [zenity]
     prime:
