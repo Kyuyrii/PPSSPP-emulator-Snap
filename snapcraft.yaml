@@ -1,6 +1,6 @@
 name: ppsspp-emulator
 base: core24
-version: '1.20.2'
+version: '1.20.3'
 platforms:
   amd64:
     build-on: [amd64]
