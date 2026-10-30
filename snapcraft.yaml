@@ -15,6 +15,7 @@ icon: ppsspp.svg
 
 apps:
   ppsspp-emulator:
+    command-chain: [override-xdg-paths]
     command: usr/bin/PPSSPPSDL
     desktop: usr/share/applications/PPSSPPSDL.desktop
     common-id: org.ppsspp.PPSSPP
@@ -87,3 +88,8 @@ parts:
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libSDL2*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libdecor-0*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libsamplerate*
+
+  command-chain:
+    after: [dependencies]
+    plugin: dump
+    source: ./command-chain/

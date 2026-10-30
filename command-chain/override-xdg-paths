@@ -1,0 +1,19 @@
+#!/bin/bash
+
+export XDG_CONFIG_HOME="$SNAP_USER_COMMON/.config"
+export XDG_DATA_HOME="$SNAP_USER_COMMON/.local/share"
+
+mkdir -p "$XDG_CONFIG_HOME"
+mkdir -p "$XDG_DATA_HOME"
+
+if [ -d "$SNAP_USER_DATA/.config/ppsspp" ]; then
+    cp -r "$SNAP_USER_DATA/.config/ppsspp" "$SNAP_USER_COMMON/.config/"
+    rm -rf "$SNAP_USER_DATA/.config/ppsspp"
+fi
+
+if [ -d "$SNAP_USER_DATA/.local/share/ppsspp" ]; then
+    cp -r "$SNAP_USER_DATA/.local/share/ppsspp" "$SNAP_USER_COMMON/.local/share/"
+    rm -rf "$SNAP_USER_DATA/.local/share/ppsspp"
+fi
+
+exec "$@"
