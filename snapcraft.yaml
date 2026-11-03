@@ -86,12 +86,14 @@ parts:
       - libsamplerate0
       - libglew2.2
       - libsdl2-classic
+      - libxss1
     prime:
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libSDL2*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libdecor-0*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libsamplerate*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libGLEW*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/sdl2-classic
+      - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libXss.so*
 
   command-chain:
     after: [dependencies]
