@@ -84,10 +84,12 @@ parts:
       - libsdl2-2.0-0
       - libsdl2-ttf-2.0-0
       - libsamplerate0
+      - libglew2.2
     prime:
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libSDL2*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libdecor-0*
       - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libsamplerate*
+      - usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libGLEW*
 
   command-chain:
     after: [dependencies]
