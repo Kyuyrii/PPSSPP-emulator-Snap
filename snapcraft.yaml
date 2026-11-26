@@ -66,9 +66,6 @@ parts:
       - -DUSING_QT_UI=OFF
       - -DBUILD_TESTING=OFF
       - -DOpenGL_GL_PREFERENCE=GLVND
-    override-build: |
-      craftctl default
-      sed -i 's|Name=PPSSPPSDL|Name=PPSSPP [Kyu]|' $CRAFT_PART_INSTALL/usr/share/applications/PPSSPPSDL.desktop
 
   zenity:
     after: [ppsspp]
